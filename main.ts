@@ -110,26 +110,26 @@ input.onButtonPressed(Button.A, function on_button_pressed_a() {
 input.onButtonPressed(Button.B, function on_button_pressed_b() {
     
 })
+let distance = sonar.ping(DigitalPin.P12, DigitalPin.P14, PingUnit.MicroSeconds)
 // try building another forever loop?
 basic.forever(function on_forever() {
     let angle: number;
+    
+    distance = sonar.ping(DigitalPin.P12, DigitalPin.P14, PingUnit.MicroSeconds)
     led.unplot(0, 0)
     motobit.invert(Motor.Left, true)
     motobit.invert(Motor.Right, true)
     for (angle = 30; angle < 150; angle++) {
         pins.servoWritePin(AnalogPin.P16, angle)
-        if (angle == 270) {
-            led.plot(0, 0)
-        }
-        
+        distance = sonar.ping(DigitalPin.P12, DigitalPin.P14, PingUnit.MicroSeconds)
+        // if angle == 150:
+        // led.plot(0, 0)
         pause(5)
     }
     for (angle = 150; angle > 30; angle += -1) {
         pins.servoWritePin(AnalogPin.P16, angle)
-        if (angle == 270) {
-            led.plot(0, 0)
-        }
-        
+        // if angle == 270:
+        // led.plot(0, 0)
         pause(5)
     }
     // pins.servo_write_pin(AnalogPin.P16, 0)    #position initial

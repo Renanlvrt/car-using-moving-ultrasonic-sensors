@@ -114,21 +114,25 @@ def on_button_pressed_b():
 
 input.on_button_pressed(Button.B, on_button_pressed_b)
 
+distance = sonar.ping(DigitalPin.P12, DigitalPin.P14, PingUnit.MICRO_SECONDS)
 
 #try building another forever loop?
 def on_forever():
+    global distance
+    distance = sonar.ping(DigitalPin.P12, DigitalPin.P14, PingUnit.MICRO_SECONDS)
     led.unplot(0, 0)
     motobit.invert(Motor.LEFT, True)
     motobit.invert(Motor.RIGHT, True)
     for angle in range(30, 150):
         pins.servo_write_pin(AnalogPin.P16, angle)
-        if angle == 270:
-            led.plot(0, 0)
+        distance = sonar.ping(DigitalPin.P12, DigitalPin.P14, PingUnit.MICRO_SECONDS)
+        #if angle == 150:
+            #led.plot(0, 0)
         pause(5)
     for angle in range(150, 30, -1):
             pins.servo_write_pin(AnalogPin.P16, angle)
-            if angle == 270:
-                led.plot(0, 0)
+            #if angle == 270:
+                #led.plot(0, 0)
             pause(5)
     #pins.servo_write_pin(AnalogPin.P16, 0)    #position initial
     #pause(2000)

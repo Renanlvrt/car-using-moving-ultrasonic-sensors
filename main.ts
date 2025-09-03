@@ -13,51 +13,37 @@ input.onButtonPressed(Button.B, function on_button_pressed_b() {
     led.unplot(0, 0)
     on = false
 })
-let on = false
-let manouvering = false
-//  TURN LEFT: pins.servo_write_pin(AnalogPin.P15, 37)
-//  TURN RIGHT: pins.servo_write_pin(AnalogPin.P15, 160)
-//  neutral: pins.servo_write_pin(AnalogPin.P15, 90)
-motobit.invert(Motor.Left, true)
-motobit.invert(Motor.Right, true)
-motobit.enable(MotorPower.Off)
-let distance = sonar.ping(DigitalPin.P12, DigitalPin.P14, PingUnit.MicroSeconds)
-serial.writeValue("distance", distance)
-//  serial.writeNumber(sonar.ping(DigitalPin.P12, DigitalPin.P14, PingUnit.MICRO_SECONDS));
-// try building another forever loop?
-basic.forever(function on_forever() {
-    motobit.invert(Motor.Left, true)
-    motobit.invert(Motor.Right, true)
+let rotation = 1
+function turn_left(angle: number, rotation: number) {
     
     
     
-    on = true
-    distance = sonar.ping(DigitalPin.P12, DigitalPin.P14, PingUnit.MicroSeconds)
-    led.plot(0, 0)
-    //  serial.write_number(distance)
-    serial.writeValue("distance", distance)
-    serial.writeLine("" + ("" + on))
-    serial.writeLine("" + ("" + manouvering))
-    /** for angle in range(30, 150):
-        pins.servo_write_pin(AnalogPin.P16, angle)
-        distance = sonar.ping(DigitalPin.P12, DigitalPin.P14, PingUnit.MICRO_SECONDS)
-        pause(5)
-    for angle in range(150, 30, -1):
-            pins.servo_write_pin(AnalogPin.P16, angle)
-            pause(5)
- */
+    
     if (on) {
         if (!manouvering) {
             while (distance < 3500) {
+                pins.servoWritePin(AnalogPin.P16, angle)
+                angle += rotation
+                if (angle > 120) {
+                    rotation = -1
+                } else if (angle < 90) {
+                    // here cannot go right! (look at)
+                    rotation = 1
+                }
+                
                 basic.clearScreen()
                 serial.writeValue("in the cycle", distance)
                 led.unplot(0, 0)
                 // not to forget to update distance in the while
                 distance = sonar.ping(DigitalPin.P12, DigitalPin.P14, PingUnit.MicroSeconds)
+                if (distance > 3000) {
+                    angle += rotation * -1
+                }
+                
                 manouvering = true
                 motobit.enable(MotorPower.On)
                 led.plot(2, 2)
-                if (distance < 1500) {
+                if (distance < 1500 && angle < 120) {
                     // led.plot(4,4)
                     led.plot(2, 1)
                     led.plot(2, 3)
@@ -106,10 +92,53 @@ basic.forever(function on_forever() {
             basic.clearScreen()
             // not to forget to update manouvering
             manouvering = false
+            pause(5)
         }
         
     }
     
+    
+}
+
+let on = false
+let manouvering = false
+//  TURN LEFT: pins.servo_write_pin(AnalogPin.P15, 37)
+//  TURN RIGHT: pins.servo_write_pin(AnalogPin.P15, 160)
+//  neutral: pins.servo_write_pin(AnalogPin.P15, 90)
+motobit.invert(Motor.Left, true)
+motobit.invert(Motor.Right, true)
+motobit.enable(MotorPower.Off)
+let distance = sonar.ping(DigitalPin.P12, DigitalPin.P14, PingUnit.MicroSeconds)
+serial.writeValue("distance", distance)
+//  serial.writeNumber(sonar.ping(DigitalPin.P12, DigitalPin.P14, PingUnit.MICRO_SECONDS));
+// try building another forever loop?
+basic.forever(function on_forever() {
+    let angle: number;
+    motobit.invert(Motor.Left, true)
+    motobit.invert(Motor.Right, true)
+    
+    
+    
+    
+    on = true
+    distance = sonar.ping(DigitalPin.P12, DigitalPin.P14, PingUnit.MicroSeconds)
+    led.plot(0, 0)
+    //  serial.write_number(distance)
+    serial.writeValue("distance", distance)
+    serial.writeLine("" + ("" + on))
+    serial.writeLine("" + ("" + manouvering))
+    for (angle = 30; angle < 150; angle++) {
+        pins.servoWritePin(AnalogPin.P16, angle)
+        distance = sonar.ping(DigitalPin.P12, DigitalPin.P14, PingUnit.MicroSeconds)
+        pause(5)
+        turn_left(angle, rotation)
+    }
+    for (angle = 150; angle > 30; angle += -1) {
+        pins.servoWritePin(AnalogPin.P16, angle)
+        distance = sonar.ping(DigitalPin.P12, DigitalPin.P14, PingUnit.MicroSeconds)
+        pause(5)
+        turn_left(angle, rotation)
+    }
 })
 /** 
 

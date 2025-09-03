@@ -1,4 +1,4 @@
-"""
+
 def on_button_pressed_a():
     global on
     motobit.enable(MotorPower.ON)
@@ -44,6 +44,13 @@ def on_forever():
     serial.write_value("distance", distance)
     serial.write_line("" + str((on)))
     serial.write_line("" + str((manouvering)))
+    """for angle in range(30, 150):
+        pins.servo_write_pin(AnalogPin.P16, angle)
+        distance = sonar.ping(DigitalPin.P12, DigitalPin.P14, PingUnit.MICRO_SECONDS)
+        pause(5)
+    for angle in range(150, 30, -1):
+            pins.servo_write_pin(AnalogPin.P16, angle)
+            pause(5)"""
     if on:
         if not (manouvering):
             while distance < 3500:
@@ -102,6 +109,8 @@ def on_forever():
             #not to forget to update manouvering
             manouvering = False
 basic.forever(on_forever)
+
+
 """
 
 def on_button_pressed_a():
@@ -141,10 +150,4 @@ def on_forever():
     #pins.servo_write_pin(AnalogPin.P16, 0)    #position droite
     pass
 basic.forever(on_forever)
-
-
-
-
-
-
-
+"""
